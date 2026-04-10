@@ -1,8 +1,12 @@
 {
-    "log-driver": "json-file",
-    "log-opts": {
-      "max-size": "10m",
-      "max-file": "5"
-    },
-    "registry-mirrors": ["https://docker.1ms.run","https://registry.inner.websoft9.cn"]
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "10m",
+    "max-file": "5"
+  },
+  "registry-mirrors": [
+    "https://docker.1ms.run",
+    "https://docker.m.daocloud.io",
+    "https://docker.zhai.cm"
+  ]
 }
