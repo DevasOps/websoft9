@@ -28,8 +28,8 @@ async def verify_key(request: Request, api_key_header: str = Security(api_key_he
     """
     Verify API Key
     """
-    # skip docs
-    if request.url.path == "/api/docs":
+    # skip docs and openapi endpoints
+    if request.url.path in {"/api/docs", "/api/openapi.json", "/api/redoc"}:
         return None 
 
     # validate api key is provided
@@ -96,13 +96,20 @@ async def custom_swagger_ui_html():
 
 # remove 422 responses
 def remove_422_responses():
-    openapi_schema = app.openapi()
-    for path, path_item in openapi_schema["paths"].items():
-        for method, operation in path_item.items():
-            operation["responses"].pop("422", None)
-    app.openapi_schema = openapi_schema
+    original_openapi = app.openapi
 
-remove_422_responses()
+    def custom_openapi():
+        if app.openapi_schema:
+            return app.openapi_schema
+
+        openapi_schema = original_openapi()
+        for path, path_item in openapi_schema["paths"].items():
+            for method, operation in path_item.items():
+                operation["responses"].pop("422", None)
+        app.openapi_schema = openapi_schema
+        return app.openapi_schema
+
+    app.openapi = custom_openapi
 
 #custom error handler
 @app.exception_handler(CustomException)
@@ -126,3 +133,5 @@ app.include_router(api_app.router,tags=["apps"])
 app.include_router(api_proxy.router,tags=["proxys"])
 app.include_router(api_backup.router,tags=["backup"])
 app.include_router(api_settings.router,tags=["settings"])
+
+remove_422_responses()
