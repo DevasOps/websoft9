@@ -11,3 +11,4 @@ PyYAML
 docker
 tenacity
 aiodocker
+pydantic
