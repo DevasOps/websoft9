@@ -197,7 +197,7 @@ jobs:
         id: build
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./docker/apphub
           file: ./docker/apphub/Dockerfile
           push: false
           tags: websoft9-apphub:ci-test
